@@ -4,10 +4,12 @@ import Input from 'antd/es/input/Input';
 import { useEffect, useState, ChangeEvent } from 'react';
 import TextArea from 'antd/es/input/TextArea';
 import { Animal } from '../Models/Animal';
-import { Button, message, Upload, UploadProps } from 'antd';
+import { Button, message, Select, Upload, UploadProps } from 'antd';
 import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import axios from 'axios';
+import { AnimalStatus } from '../Models/AnimalStatus';
+import { TypeAnimal } from '../Models/TypeAnimal';
 
 interface Props {
 	mode: Mode;
@@ -16,6 +18,8 @@ interface Props {
 	handleCancel: () => void;
 	handleCreate: (request: AnimalRequest) => void;
 	handleUpdate: (id: string, request: AnimalRequest) => void;
+	typeAnimals: TypeAnimal[];
+	animalStatuses: AnimalStatus[];
 }
 
 export enum Mode {
@@ -30,10 +34,12 @@ export const CreateUpdateAnimal = ({
 	handleCancel,
 	handleCreate,
 	handleUpdate,
+	typeAnimals,
+	animalStatuses,
 }: Props) => {
 	const [name, setName] = useState<string>('');
 	const [gender, setGender] = useState<string>('');
-	const [age, setAge] = useState<number>(1);
+	const [age, setAge] = useState<number>(0);
 	const [description, setDescription] = useState<string>('');
 	const [photoPath, setPhotoPath] = useState<string>('');
 	const [typeAnimalId, setTypeAnimalId] = useState<string>('');
@@ -93,6 +99,11 @@ export const CreateUpdateAnimal = ({
 			return;
 		}
 
+		if (age === null) {
+			message.warning('Пожалуйста, укажите возраст животного');
+			return;
+		}
+
 		const animalRequest = {
 			name,
 			gender,
@@ -128,19 +139,27 @@ export const CreateUpdateAnimal = ({
 					}
 					placeholder='Имя'
 				/>
-				<Input
+				<Select
 					value={gender}
-					onChange={(e: ChangeEvent<HTMLInputElement>) =>
-						setGender(e.target.value)
-					}
+					onChange={(value: 'Мальчик' | 'Девочка') => setGender(value)}
 					placeholder='Пол'
+					options={[
+						{ value: 'Мальчик', label: 'Мальчик' },
+						{ value: 'Девочка', label: 'Девочка' },
+					]}
 				/>
 				<Input
+					type='number'
+					min={0}
+					max={150}
 					value={age}
-					onChange={(e: ChangeEvent<HTMLInputElement>) =>
-						setAge(Number(e.target.value))
-					}
-					placeholder='Возраст'
+					onChange={(e: ChangeEvent<HTMLInputElement>) => {
+						const value = parseInt(e.target.value);
+						if (!isNaN(value)) {
+							setAge(value);
+						}
+					}}
+					placeholder='Возраст (лет)'
 				/>
 				<TextArea
 					value={description}
@@ -186,19 +205,24 @@ export const CreateUpdateAnimal = ({
 						</Upload>
 					)}
 				</div>
-				<Input
+				<Select
 					value={typeAnimalId}
-					onChange={(e: ChangeEvent<HTMLInputElement>) =>
-						setTypeAnimalId(e.target.value)
-					}
+					onChange={(value: string) => setTypeAnimalId(value)}
 					placeholder='Тип животного'
+					options={typeAnimals.map((type: TypeAnimal) => ({
+						label: type.name,
+						value: type.id,
+					}))}
 				/>
-				<Input
+
+				<Select
 					value={animalStatusId}
-					onChange={(e: ChangeEvent<HTMLInputElement>) =>
-						setAnimalStatusId(e.target.value)
-					}
+					onChange={(value: string) => setAnimalStatusId(value)}
 					placeholder='Статус животного'
+					options={animalStatuses.map((status: AnimalStatus) => ({
+						label: status.name,
+						value: status.id,
+					}))}
 				/>
 			</div>
 		</Modal>

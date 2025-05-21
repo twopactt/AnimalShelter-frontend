@@ -2,14 +2,35 @@ import Card from 'antd/es/card/Card';
 import Button from 'antd/es/button/button';
 import { Animal } from '../Models/Animal';
 import Image from 'next/image';
+import { TypeAnimal } from '../Models/TypeAnimal';
+import { AnimalStatus } from '../Models/AnimalStatus';
+import { getAgeString } from '../utils/ageHelper';
 
 interface Props {
 	animals: Animal[];
+	typeAnimals: TypeAnimal[];
+	animalStatuses: AnimalStatus[];
 	handleDelete: (id: string) => void;
 	handleOpen: (animal: Animal) => void;
 }
 
-export const Animals = ({ animals, handleDelete, handleOpen }: Props) => {
+export const Animals = ({
+	animals,
+	typeAnimals,
+	animalStatuses,
+	handleDelete,
+	handleOpen,
+}: Props) => {
+	const getTypeName = (id: string) => {
+		const type = typeAnimals.find(t => t.id === id);
+		return type ? type.name : id;
+	};
+
+	const getStatusName = (id: string) => {
+		const status = animalStatuses.find(s => s.id === id);
+		return status ? status.name : id;
+	};
+
 	return (
 		<div className='cards'>
 			{animals.map((animal: Animal) => (
@@ -37,7 +58,7 @@ export const Animals = ({ animals, handleDelete, handleOpen }: Props) => {
 								}}
 							>
 								<span style={{ fontWeight: 'bold' }}>{animal.name}</span>
-								<span>{animal.age} лет</span>
+								<span>{getAgeString(animal.age)}</span>
 							</div>
 						</>
 					}
@@ -45,7 +66,7 @@ export const Animals = ({ animals, handleDelete, handleOpen }: Props) => {
 				>
 					<p>
 						<strong>Пол: </strong>
-						{animal.gender}
+						{animal.gender === 'Мальчик' ? 'Мальчик' : 'Девочка'}
 					</p>
 					<p>
 						<strong>Описание: </strong>
@@ -53,11 +74,11 @@ export const Animals = ({ animals, handleDelete, handleOpen }: Props) => {
 					</p>
 					<p>
 						<strong>Тип: </strong>
-						{animal.typeAnimalId}
+						{getTypeName(animal.typeAnimalId)}
 					</p>
 					<p>
 						<strong>Статус: </strong>
-						{animal.animalStatusId}
+						{getStatusName(animal.animalStatusId)}
 					</p>
 					<div className='card__buttons'>
 						<Button onClick={() => handleOpen(animal)} style={{ flex: 1 }}>

@@ -1,7 +1,7 @@
 export interface Animal {
 	id: string;
 	name: string;
-	gender: string;
+	gender: 'Мальчик' | 'Девочка';
 	age: number;
 	description: string;
 	photo: string;

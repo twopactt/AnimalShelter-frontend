@@ -13,20 +13,25 @@ import {
 import Title from 'antd/es/skeleton/Title';
 import { CreateUpdateAnimal, Mode } from '../components/CreateUpdateAnimal';
 import { Animal } from '../Models/Animal';
+import { getAllAnimalStatuses } from '../services/animalStatuses';
+import { getAllTypeAnimals } from '../services/typeAnimals';
+import { AnimalStatus } from '../Models/AnimalStatus';
+import { TypeAnimal } from '../Models/TypeAnimal';
 
 export default function AnimalsPage() {
 	const defaultValues = {
 		name: '',
-		description: '',
-		age: 1,
+		description: ''
 	} as Animal;
 
 	const [values, setValues] = useState<Animal>(defaultValues);
-
 	const [animals, setAnimals] = useState<Animal[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [mode, setMode] = useState(Mode.Create);
+
+	const [typeAnimals, setTypeAnimals] = useState<TypeAnimal[]>([]);
+	const [animalStatuses, setAnimalStatuses] = useState<AnimalStatus[]>([]);
 
 	useEffect(() => {
 		const getAnimals = async () => {
@@ -36,6 +41,18 @@ export default function AnimalsPage() {
 		};
 
 		getAnimals();
+	}, []);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			const [types, statuses] = await Promise.all([
+				getAllTypeAnimals(),
+				getAllAnimalStatuses(),
+			]);
+			setTypeAnimals(types);
+			setAnimalStatuses(statuses);
+		};
+		fetchData();
 	}, []);
 
 	const handleCreateAnimal = async (request: AnimalRequest) => {
@@ -95,6 +112,8 @@ export default function AnimalsPage() {
 				handleCreate={handleCreateAnimal}
 				handleUpdate={handleUpdateAnimal}
 				handleCancel={closeModal}
+				typeAnimals={typeAnimals}
+				animalStatuses={animalStatuses}
 			/>
 
 			{loading ? (
@@ -102,6 +121,8 @@ export default function AnimalsPage() {
 			) : (
 				<Animals
 					animals={animals}
+					typeAnimals={typeAnimals}
+					animalStatuses={animalStatuses}
 					handleOpen={openEditModal}
 					handleDelete={handleDeleteAnimal}
 				/>
