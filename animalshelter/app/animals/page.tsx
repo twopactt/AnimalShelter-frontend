@@ -85,6 +85,7 @@ export default function AnimalsPage() {
 
 	const closeModal = () => {
 		setValues(defaultValues);
+		setMode(Mode.Create);
 		setIsModalOpen(false);
 	};
 

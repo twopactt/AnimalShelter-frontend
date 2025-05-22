@@ -35,12 +35,14 @@ export const Animals = ({
 		<div className='cards'>
 			{animals.map((animal: Animal) => (
 				<Card
+					className='card'
 					key={animal.id}
 					cover={
 						<>
 							{animal.photo && (
 								<div style={{ position: 'relative', height: '200px' }}>
 									<Image
+										className='card__img'
 										src={`http://localhost:5251${animal.photo}`}
 										alt={animal.name}
 										fill

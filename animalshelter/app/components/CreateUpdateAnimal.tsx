@@ -31,7 +31,7 @@ export const CreateUpdateAnimal = ({
 	mode,
 	values,
 	isModalOpen,
-	handleCancel,
+	handleCancel: originalHandleCancel,
 	handleCreate,
 	handleUpdate,
 	typeAnimals,
@@ -56,8 +56,19 @@ export const CreateUpdateAnimal = ({
 		setAnimalStatusId(values.animalStatusId);
 	}, [values]);
 
-	const handleRemovePhoto = () => {
-		setPhotoPath('');
+	const handleRemovePhoto = async () => {
+		if (!photoPath) return;
+
+		try {
+			await axios.delete(
+				`http://localhost:5251/api/upload/delete-photo?photoPath=${photoPath}`
+			);
+			setPhotoPath('');
+			message.success('Фото успешно удалено');
+		} catch (error) {
+			console.error('Error deleting photo:', error);
+			message.error('Ошибка при удалении фото');
+		}
 	};
 
 	const uploadProps: UploadProps = {
@@ -119,6 +130,17 @@ export const CreateUpdateAnimal = ({
 		} else {
 			handleUpdate(values.id, animalRequest);
 		}
+	};
+
+	const handleCancel = () => {
+		if (photoPath && mode === Mode.Create) {
+			axios
+				.delete(
+					`http://localhost:5251/api/upload/delete-photo?photoPath=${photoPath}`
+				)
+				.catch(error => console.error('Error deleting photo:', error));
+		}
+		originalHandleCancel();
 	};
 
 	return (
