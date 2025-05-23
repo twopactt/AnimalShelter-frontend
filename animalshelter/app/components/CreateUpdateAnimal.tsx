@@ -10,6 +10,7 @@ import Image from 'next/image';
 import axios from 'axios';
 import { AnimalStatus } from '../Models/AnimalStatus';
 import { TypeAnimal } from '../Models/TypeAnimal';
+import config from '../../config';
 
 interface Props {
 	mode: Mode;
@@ -61,7 +62,7 @@ export const CreateUpdateAnimal = ({
 
 		try {
 			await axios.delete(
-				`http://localhost:5251/api/upload/delete-photo?photoPath=${photoPath}`
+				`${config.api.upload.baseUrl}${config.api.upload.endpoints.deletePhoto}?photoPath=${photoPath}`
 			);
 			setPhotoPath('');
 			message.success('Фото успешно удалено');
@@ -79,7 +80,7 @@ export const CreateUpdateAnimal = ({
 				formData.append('file', file);
 
 				const response = await axios.post<{ filePath: string }>(
-					'http://localhost:5251/api/upload/upload-photo',
+					`${config.api.upload.baseUrl}${config.api.upload.endpoints.uploadPhoto}`,
 					formData,
 					{
 						headers: {
@@ -136,7 +137,7 @@ export const CreateUpdateAnimal = ({
 		if (photoPath && mode === Mode.Create) {
 			axios
 				.delete(
-					`http://localhost:5251/api/upload/delete-photo?photoPath=${photoPath}`
+					`${config.api.upload.baseUrl}${config.api.upload.endpoints.deletePhoto}?photoPath=${photoPath}`
 				)
 				.catch(error => console.error('Error deleting photo:', error));
 		}
@@ -199,7 +200,7 @@ export const CreateUpdateAnimal = ({
 									src={
 										photoPath.startsWith('http')
 											? photoPath
-											: `http://localhost:5251${photoPath}`
+											: `${config.api.baseUrl}${photoPath}`
 									}
 									alt='Preview'
 									fill

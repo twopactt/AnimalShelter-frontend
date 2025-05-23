@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { TypeAnimal } from '../Models/TypeAnimal';
 import { AnimalStatus } from '../Models/AnimalStatus';
 import { getAgeString } from '../utils/ageHelper';
+import config from '../../config';
 
 interface Props {
 	animals: Animal[];
@@ -43,7 +44,11 @@ export const Animals = ({
 								<div style={{ position: 'relative', height: '200px' }}>
 									<Image
 										className='card__img'
-										src={`http://localhost:5251${animal.photo}`}
+										src={
+											animal.photo.startsWith('http')
+												? animal.photo
+												: `${config.api.baseUrl}${animal.photo}`
+										}
 										alt={animal.name}
 										fill
 										style={{ objectFit: 'cover', borderRadius: '6px' }}

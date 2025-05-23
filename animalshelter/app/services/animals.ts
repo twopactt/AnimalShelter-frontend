@@ -1,3 +1,5 @@
+import config from '../../config';
+
 export interface AnimalRequest {
 	name: string;
 	gender: string;
@@ -9,13 +11,15 @@ export interface AnimalRequest {
 }
 
 export const getAllAnimals = async () => {
-	const response = await fetch('http://localhost:5251/Animals');
+	const response = await fetch(
+		`${config.api.baseUrl}${config.api.endpoints.animals}`
+	);
 
 	return response.json();
 };
 
 export const createAnimal = async (animalRequest: AnimalRequest) => {
-	await fetch('http://localhost:5251/Animals', {
+	await fetch(`${config.api.baseUrl}${config.api.endpoints.animals}`, {
 		method: 'POST',
 		headers: {
 			'content-type': 'application/json',
@@ -24,8 +28,11 @@ export const createAnimal = async (animalRequest: AnimalRequest) => {
 	});
 };
 
-export const updateAnimal = async (id: string, animalRequest: AnimalRequest) => {
-	await fetch(`http://localhost:5251/Animals/${id}`, {
+export const updateAnimal = async (
+	id: string,
+	animalRequest: AnimalRequest
+) => {
+	await fetch(`${config.api.baseUrl}${config.api.endpoints.animals}/${id}`, {
 		method: 'PUT',
 		headers: {
 			'content-type': 'application/json',
@@ -35,7 +42,7 @@ export const updateAnimal = async (id: string, animalRequest: AnimalRequest) => 
 };
 
 export const deleteAnimal = async (id: string) => {
-	await fetch(`http://localhost:5251/Animals/${id}`, {
+	await fetch(`${config.api.baseUrl}${config.api.endpoints.animals}/${id}`, {
 		method: 'DELETE',
 	});
 };
